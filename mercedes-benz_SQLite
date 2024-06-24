@@ -1,0 +1,149 @@
+import sqlite3
+
+def create_tables():
+    sql_statements = [
+        '''
+        CREATE TABLE "mercedes_benz" (
+            "fahrzeug" TEXT,
+            "Asien" INTEGER,
+            "Europa" INTEGER,
+            "Deutschland" INTEGER,
+            "China" INTEGER,
+            "Nordamerika" INTEGER,
+            "Rest_der_Welt" INTEGER
+        )
+        '''
+    ]
+
+    try:
+        with sqlite3.connect('mercedes_benz.db') as conn:
+            cursor = conn.cursor()
+            for statement in sql_statements:
+                cursor.execute(statement)
+            
+            conn.commit()
+    except sqlite3.Error as e:
+        print(e)
+
+if __name__ == '__main__':
+    create_tables()
+
+conn = sqlite3.connect('mercedes_benz.db')
+cursor = conn.cursor()
+
+
+
+res=cursor.execute("""INSERT INTO mercedes_benz (fahrzeug, Asien, Europa, Deutschland, China, Nordamerika, Rest_der_Welt) 
+VALUES ("Mercedes-Benz Cars", 963800, 659400, 234300, 737200, 339500, 81100)""")
+
+res=cursor.execute("""INSERT INTO mercedes_benz (fahrzeug, Asien, Europa, Deutschland, China, Nordamerika, Rest_der_Welt) 
+                          VALUES ("Mercedes-Benz Vans", 42400, 279400, 114000, 33400, 86400, 39600)""")
+
+conn.commit()
+
+
+res=cursor.execute("""SELECT AVG(Asien + Europa + Deutschland + China + Nordamerika + Rest_der_Welt) AS avg FROM mercedes_benz""")
+res.fetchone()
+
+res=cursor.execute("""SELECT SUM(Asien) AS Total_Asien FROM mercedes_benz""")
+res.fetchone()
+
+res=cursor.execute("""SELECT SUM(Europa) AS Total_Europa FROM mercedes_benz""")
+res.fetchone()
+
+res=cursor.execute("""SELECT SUM(Deutschland) AS Total_Deutschland FROM mercedes_benz""")
+res.fetchone()
+
+res=cursor.execute("""SELECT SUM(China) AS Total_China FROM mercedes_benz""")
+res.fetchone()
+
+res=cursor.execute("""SELECT SUM(Nordamerika) AS Total_Nordamerika FROM mercedes_benz""")
+res.fetchone()
+
+res=cursor.execute("""SELECT SUM(Rest_der_Welt) AS Total_Rest_der_Welt FROM mercedes_benz""")
+res.fetchone()
+
+res=cursor.execute("""SELECT SUM(Asien + Europa + Deutschland + China + Nordamerika + Rest_der_Welt) AS Total_mercedesbenztabelle FROM mercedes_benz""")
+res.fetchone()
+
+res=cursor.execute("""SELECT Fahrzeug, MIN(Asien + Europa + Deutschland + China + Nordamerika + Rest_der_Welt) FROM mercedes_benz""")
+res.fetchone()
+
+res=cursor.execute('''
+SELECT 
+    MIN(Asien) AS min_Asien,
+    MIN(Europa) AS min_Europa,
+    MIN(Deutschland) AS min_Deutschland,
+    MIN(China) AS min_China,
+    MIN(Nordamerika) AS min_Nordamerika,
+    MIN(Rest_der_Welt) AS min_Rest_der_Welt
+FROM mercedes_benz
+''')
+
+# Fetch and print the result
+result = cursor.fetchone()
+print("Minimum values in each column:")
+print(f"Asien: {result[0]}")
+print(f"Europa: {result[1]}")
+print(f"Deutschland: {result[2]}")
+print(f"China: {result[3]}")
+print(f"Nordamerika: {result[4]}")
+print(f"Rest_der_Welt: {result[5]}")
+
+res=cursor.execute('''
+SELECT 
+    MAX(Asien) AS min_Asien,
+    MAX(Europa) AS min_Europa,
+    MAX(Deutschland) AS min_Deutschland,
+    MAX(China) AS min_China,
+    MAX(Nordamerika) AS min_Nordamerika,
+    MAX(Rest_der_Welt) AS min_Rest_der_Welt
+FROM mercedes_benz
+''')
+
+# Fetch and print the result
+result = cursor.fetchone()
+print("Maximal values in each column:")
+print(f"Asien: {result[0]}")
+print(f"Europa: {result[1]}")
+print(f"Deutschland: {result[2]}")
+print(f"China: {result[3]}")data_cleaned = data_cleaned.drop_duplicates()
+
+print(data_cleaned)
+
+
+print(f"Nordamerika: {result[4]}")
+print(f"Rest_der_Welt: {result[5]}")
+
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+
+
+res=cursor.execute("""SELECT Fahrzeug, MAX(Asien + Europa + Deutschland + China + Nordamerika + Rest_der_Welt) FROM mercedes_benz""")
+res.fetchone()
+
+query = "SELECT fahrzeug, Asien, Europa, Deutschland, China, Nordamerika, Rest_der_Welt FROM mercedes_benz"
+
+data = pd.read_sql(query, conn)
+print(data)
+
+data.dropna(subset=['fahrzeug', 'Asien', 'Europa', 'Deutschland', 'China', 'Nordamerika', 'Rest_der_Welt'])
+print(data)
+
+data_cleaned=data.drop(index=range(0, 30))
+data_cleaned
+
+data_cleaned.cumsum().plot();
+
+data_cleaned.plot(x="fahrzeug", y=["Asien", "Europa", "Deutschland", "China", "Nordamerika", "Rest_der_Welt"], kind="bar", figsize=(10, 10))
+
+
+plt.xlabel("Fahrzeug")
+plt.ylabel("Einkommen in Millionen")
+plt.title("Verteilung der Art von Autoseinkommen nach Kontinent")
+
+plt.savefig('mercedesbenz.png') 
+plt.show()
+
